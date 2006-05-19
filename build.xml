@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="jabberBot" default="dist" basedir=".">
+    <description>Application which backs up your imap mail</description>
+    
+	<property file="build.properties"/>
+	<property file="${user.home}/build.properties"/>
+
+    <property name="destdir" location="${dest.dir}" />
+    <property name="buildir" location="build/" />
+    <property name="srcdir" location="src/" description="where sources are located at for building" />
+
+   
+    <target name="prep">
+        <mkdir dir="${buildir}" />
+		<mkdir dir="${buildir}/conf" />
+		<path id="project.class.path">
+			<pathelement path="${classpath}"/>
+			<!-- for configuration files -->
+			<pathelement path="conf"/>
+			<fileset dir="lib">
+				<include name="**/*.jar"/>
+			</fileset>
+		</path>
+    </target>
+    
+    <target name="clean">
+        <delete dir="${buildir}" />
+        <delete file="${destdir}/jabberbot.jar" />
+    </target>
+    
+    <target name="compile" depends="prep">
+        <javac source="1.4" target="1.4.2" debug="true" debuglevel="lines,source"
+		       srcdir="${srcdir}" destdir="${buildir}">
+			   <classpath refid="project.class.path"/>
+        </javac>    
+    </target>    
+    
+    <target name="dist" depends="prep, compile">
+		<copy todir="${buildir}/conf">
+			<fileset dir="conf">
+                <include name="*.conf" />
+                <include name="*.properties" />
+            </fileset>  
+		</copy>
+		<unzip dest="${buildir}">
+			<fileset dir="lib">
+			<include name="*.jar"/>
+			</fileset>
+		</unzip>
+		<jar jarfile="${destdir}/jabberbot.jar" basedir="${buildir}">
+			<manifest>
+				<attribute name="Main-Class" value="com.thelangenbergs.jabberbot.JabberBot"/>
+				<attribute name="Class-Path" value="${nsit.classpath}" />
+			</manifest>
+		</jar>
+    </target>
+</project>
