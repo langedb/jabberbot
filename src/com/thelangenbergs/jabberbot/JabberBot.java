@@ -46,7 +46,7 @@ public class JabberBot {
 			}
 			
 			logger.debug("logging in as "+_user);
-			conn.login(_user,_password, "JabberBot");
+			conn.login(_user,_password, "newJabberBot");
 			
 			if(conn.isAuthenticated()){
 				logger.debug("success");
