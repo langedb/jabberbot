@@ -36,18 +36,29 @@ public class ChatBot implements Runnable {
 		conn = c;
 		t = new Thread(this);
 		
+		logger.debug("entering room");
 		//join the chatroom
 		muc = new MultiUserChat(conn,"davelchat@conference.im.uchicago.edu");
+		
 		try {
 			muc.join("jabberbot");
+			//muc.sendConfigurationForm(new Form(""));
 		} catch (XMPPException ex) {
 			logger.error(ex.getMessage(),ex);
 		}
 		
+		Message m = muc.createMessage();
+		m.setBody("Hi All");
+		try {
+			muc.sendMessage(m);
+		} catch (XMPPException ex) {
+			logger.error(ex.getMessage(),ex);
+		}
 		t.start();
 	}
 
 	public void run(){
+		logger.debug("awaiting messages");
 		while(true){
 			Message m = muc.nextMessage();
 			
