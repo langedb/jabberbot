@@ -59,6 +59,9 @@ public class JabberBot {
 			ross = conn.getRoster();
 			ross.setSubscriptionMode(Roster.SUBSCRIPTION_ACCEPT_ALL);//make the roster accept anybody who wants to subscribe
 			
+			//login to the chatroom
+			ChatBot cb = new ChatBot(conn);
+			
 			processFile();
 			
 		}

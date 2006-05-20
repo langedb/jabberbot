@@ -45,7 +45,7 @@
         <java-data xmlns="http://www.netbeans.org/ns/freeform-project-java/1">
             <compilation-unit>
                 <package-root>src</package-root>
-                <classpath mode="compile">lib/commons-cli-1.0.jar:lib/log4j.jar:lib/smack.jar:lib/smackx.jar:lib/xmlrpc-1.2-b1.jar</classpath>
+                <classpath mode="compile">lib/commons-cli-1.0.jar:lib/log4j.jar:lib/smack.jar:lib/smackx.jar:lib/xmlrpc-1.2-b1.jar:lib/smackx-debug.jar</classpath>
                 <source-level>1.4</source-level>
             </compilation-unit>
         </java-data>
