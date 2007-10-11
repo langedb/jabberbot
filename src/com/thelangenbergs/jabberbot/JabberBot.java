@@ -36,17 +36,25 @@ public class JabberBot {
 		
 		//for starters, login to jabber and send davel a message
 		try{
-			logger.debug("Connecting to "+_server);
-			conn = new SSLXMPPConnection(_server);
-			
-			if(conn.isConnected()){
-				logger.debug("Connected");
+			//keep trying to connect
+			boolean connected = false;
+			while(!connected){
+				logger.debug("Connecting to "+_server);
+				try{
+					conn = new SSLXMPPConnection(_server);
+				}
+				catch(Exception e){
+					logger.warn(e.getMessage());
+				}
+				
+				if(conn != null && conn.isConnected()){
+					logger.debug("Connected");
+					connected = true;
+				}
+				else{
+					logger.warn("Failed to connect to "+_server+" trying again");
+				}
 			}
-			else{ 
-				logger.error("failed to connect to "+_server);
-				System.exit(-1);
-			}
-			
 			logger.debug("logging in as "+_user);
 			conn.login(_user,_password, "newJabberBot");
 			

@@ -9,6 +9,7 @@
 
 package com.thelangenbergs.jabberbot;
 
+import java.net.MalformedURLException;
 import org.jivesoftware.smack.*;
 import org.jivesoftware.smack.packet.*;
 import org.jivesoftware.smackx.*;
@@ -18,6 +19,7 @@ import java.io.*;
 import java.util.*;
 import java.lang.*;
 import org.apache.xmlrpc.*;
+import java.text.*;
 import org.jivesoftware.smackx.muc.MultiUserChat;
 
 /**
@@ -124,16 +126,38 @@ class CommandHandler implements Runnable {
 	 */
 	public void run(){
 		//ok so if we are in here we have a valid command as defined in ChatBot.keywords
-		if(cmd.equals("sleep")){
-			
-			try{
-				t.sleep(10000);
-				conn.sendMessage("slept for 10 seconds");
+		try{
+			if(cmd.equals("sleep")){
+				
+				try{
+					t.sleep(10000);
+					conn.sendMessage("slept for 10 seconds");
+				} catch(Exception e){
+					logger.error(e.getMessage(), e);
+				}
+			} else if (cmd.equals("time")){
+				TimeZone tz = TimeZone.getTimeZone("GMT:00");
+				SimpleDateFormat sdf = new SimpleDateFormat("EE MMM d yyyy HH:mm:ss z");
+				sdf.setTimeZone(tz);
+				conn.sendMessage("The current time is: "+sdf.format(new Date()));
+			} else if (cmd.equals("getinfo")){
+				getInformation();
 			}
-			catch(Exception e){
-				logger.error(e.getMessage(), e);
-			}
-			
 		}
+		catch(Exception e){
+			logger.error(e.getMessage(),e);
+			try{
+				conn.sendMessage("I'm sorry but I'm unable to complete your request -- please see my log for more details");
+			}
+			catch(XMPPException ex){
+				logger.error(ex.getMessage(),ex);
+			}
+		}
+	}
+	
+	protected void getInformation() throws MalformedURLException {
+		XmlRpcClient xml = new XmlRpcClient("https://cnet.uchicago.edu/ams/servlet/AMSXMXLSERV");
+		
+		
 	}
 }
