@@ -41,7 +41,9 @@ public class JabberBot {
 			while(!connected){
 				logger.debug("Connecting to "+_server);
 				try{
-					conn = new SSLXMPPConnection(_server);
+					ConnectionConfiguration cfg = new ConnectionConfiguration(_server);
+					cfg.setSecurityMode(ConnectionConfiguration.SecurityMode.enabled);
+					conn = new XMPPConnection(cfg);
 				}
 				catch(Exception e){
 					logger.warn(e.getMessage());
@@ -67,7 +69,7 @@ public class JabberBot {
 			
 			logger.debug("getting roster");
 			ross = conn.getRoster();
-			ross.setSubscriptionMode(Roster.SUBSCRIPTION_ACCEPT_ALL);//make the roster accept anybody who wants to subscribe
+			ross.setSubscriptionMode(Roster.SubscriptionMode.accept_all);//make the roster accept anybody who wants to subscribe
 			
 			logger.debug("Spawning log monitor");
 			LogMonitor lm = new LogMonitor(conn);

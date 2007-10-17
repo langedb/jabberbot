@@ -141,7 +141,7 @@ public class LogMonitor implements Runnable {
 	 */
 	protected void notifyUsers(String subject, String message){
 		//get a fresh roster
-		for(Iterator i = conn.getRoster().getEntries(); i.hasNext();){
+		for(Iterator i = conn.getRoster().getEntries().iterator(); i.hasNext();){
 			RosterEntry re = (RosterEntry) i.next();
 			
 			logger.info("Sending message to: "+re);
