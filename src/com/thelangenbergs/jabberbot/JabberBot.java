@@ -41,9 +41,10 @@ public class JabberBot {
 			while(!connected){
 				logger.debug("Connecting to "+_server);
 				try{
-					ConnectionConfiguration cfg = new ConnectionConfiguration(_server);
+					ConnectionConfiguration cfg = new ConnectionConfiguration(_server,5222);
 					cfg.setSecurityMode(ConnectionConfiguration.SecurityMode.enabled);
 					conn = new XMPPConnection(cfg);
+					conn.connect();
 				}
 				catch(Exception e){
 					logger.warn(e.getMessage());
