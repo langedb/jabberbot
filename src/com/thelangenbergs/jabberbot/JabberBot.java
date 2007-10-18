@@ -129,7 +129,10 @@ public class JabberBot {
 				
 				MultiUserChat muc = new MultiUserChat(conn,room+"@"+_chatServer);
 				muc.join(_nickname);
-				muc.addMessageListener(new ChatBot(conn,muc,new File(_watchDir+System.getProperty("file.separator")+room)));
+				muc.addMessageListener(new ChatBot(conn,muc));
+				//start a page-scanner for this room
+				new PageScanner(muc,new File(_watchDir+System.getProperty("file.separator")+room),_scanDelay);
+
 				roomObjs.put((String)rooms.get(i),muc);
 			}
 			

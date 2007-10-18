@@ -34,9 +34,6 @@ public class ChatBot implements PacketListener {
 	private XMPPConnection conn;
 	private MultiUserChat muc;
 	
-	/** directory we're watching for pages */
-	private File _watchDir;
-	
 	private static String keywords[] = {"getinfo", "time", "sleep"};
 	
 	/**
@@ -44,11 +41,10 @@ public class ChatBot implements PacketListener {
 	 * @param c - connection back to server for sending messages
 	 * @param m - connection to Chatroom for doing various things
 	 */
-	public ChatBot(XMPPConnection c,MultiUserChat m, File watchDir) {
+	public ChatBot(XMPPConnection c,MultiUserChat m) {
 		logger.debug("listener registered:");
 		conn = c; //for sending back messages
 		muc = m;
-		
 	}
 
 	public void processPacket(Packet packet) {
