@@ -137,7 +137,7 @@ public class JabberBot {
 				DiscussionHistory hist = new DiscussionHistory();
 				hist.setMaxStanzas(0);
 				MultiUserChat muc = new MultiUserChat(conn,room+"@"+_chatServer);
-				muc.join(_nickname,"",hist,SmackConfiguration.getPacketReplyTimeout());
+				muc.join(_nickname,getRoomPassword(room),hist,SmackConfiguration.getPacketReplyTimeout());
 				muc.addMessageListener(new ChatBot(conn,muc));
 				//start a page-scanner for this room
 				new PageScanner(muc,new File(_watchDir+System.getProperty("file.separator")+room),_scanDelay);
@@ -155,6 +155,26 @@ public class JabberBot {
 		}
 		catch(Exception e){
 			logger.error(e.getMessage(),e);
+		}
+	}
+	
+	/**
+	 * Look for and retreive the password for a room
+	 *
+	 * @param room the room which we believe has a password on it
+	 * @return the room password or empty-string
+	 */
+	protected String getRoomPassword(String room) throws IOException {
+		File passwd = new File(_watchDir+System.getProperty("file.separator")+room+".passwd");
+		
+		if(passwd.exists()){
+			BufferedReader br = new BufferedReader(new FileReader(passwd));
+			String line = br.readLine().trim();
+			
+			return line;
+		} else{
+			logger.debug("no password exists for "+room);
+			return "";
 		}
 	}
 	
