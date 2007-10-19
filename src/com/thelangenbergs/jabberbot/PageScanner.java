@@ -56,6 +56,15 @@ public class PageScanner implements Runnable {
 				t.sleep(sleeptime*1000);
 			}
 		}
+		catch(IOException ioe){
+			logger.error(ioe.getMessage(), ioe);
+			try{
+				conn.sendMessage("I encountered an error -- shutting down paging scanner for this room");
+			}
+			catch(XMPPException e){
+				logger.error(e.getMessage(),e);
+			}
+		}
 		catch(Exception e){
 			logger.error(e.getMessage(), e);
 		}

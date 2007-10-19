@@ -126,9 +126,11 @@ public class JabberBot {
 				String room = (String) rooms.get(i);
 				
 				logger.debug("joining "+room);
-				
+				//don't load up any history when we connect so we don't end up answering a ton of queries
+				DiscussionHistory hist = new DiscussionHistory();
+				hist.setMaxStanzas(0);
 				MultiUserChat muc = new MultiUserChat(conn,room+"@"+_chatServer);
-				muc.join(_nickname);
+				muc.join(_nickname,"",hist,SmackConfiguration.getPacketReplyTimeout());
 				muc.addMessageListener(new ChatBot(conn,muc));
 				//start a page-scanner for this room
 				new PageScanner(muc,new File(_watchDir+System.getProperty("file.separator")+room),_scanDelay);

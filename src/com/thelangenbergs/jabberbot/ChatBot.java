@@ -34,7 +34,7 @@ public class ChatBot implements PacketListener {
 	private XMPPConnection conn;
 	private MultiUserChat muc;
 	
-	private static String keywords[] = {"getinfo", "time", "sleep"};
+	private static String keywords[] = {"getinfo", "time", "sleep", "fortune"};
 	
 	/**
 	 *
@@ -52,7 +52,7 @@ public class ChatBot implements PacketListener {
 		Message msg = (Message) packet;
 		logger.debug("received message "+msg.getBody());
 
-		if(msg.getBody().startsWith(getMyNick())){
+		if(msg.getBody().startsWith(getMyNick()) && !(msg.getFrom().equals(muc.getNickname()))){
 			//we have something to deal with
 			String command = getCommand(msg);
 			try{
@@ -143,6 +143,9 @@ class CommandHandler implements Runnable {
 			} else if (cmd.equals("getinfo")){
 				getInformation();
 			}
+			else if(cmd.equals("fortune")){
+				getFortune();
+			}
 		}
 		catch(Exception e){
 			logger.error(e.getMessage(),e);
@@ -158,6 +161,36 @@ class CommandHandler implements Runnable {
 	protected void getInformation() throws MalformedURLException {
 		XmlRpcClient xml = new XmlRpcClient("https://cnet.uchicago.edu/ams/servlet/AMSXMXLSERV");
 		
+		
+	}
+
+	private void getFortune() throws XMPPException {
+		Runtime r = Runtime.getRuntime();
+		
+		String command = "fortune";
+		
+		logger.debug("execing command "+command);
+		
+		try{
+			Process p = r.exec(command);
+			
+			//get the output
+			logger.debug("opening output from command for reading");
+			BufferedReader br = new BufferedReader(new InputStreamReader(p.getInputStream()));
+			
+			String message = "";
+			String line;
+			while((line = br.readLine()) != null){
+				message += line+"\n";
+			}
+			
+			br.close();
+			conn.sendMessage(message);
+		}
+		catch(IOException e){
+			logger.warn(e.getMessage(),e);
+			conn.sendMessage(mesg.getFrom()+": I'm sorry, but it looks like fortune is not installed on this machine");
+		}
 		
 	}
 }
