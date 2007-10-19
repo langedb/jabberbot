@@ -9,14 +9,12 @@
 
 package com.thelangenbergs.jabberbot;
 
-import java.lang.*;
 import org.jivesoftware.smack.*;
 import org.jivesoftware.smack.packet.*;
 import org.apache.log4j.*;
-import org.apache.commons.cli.*;
 import java.io.*;
 import java.util.*;
-import org.jivesoftware.smackx.muc.MultiUserChat;
+
 /**
  *
  * @author davel

@@ -12,15 +12,11 @@ package com.thelangenbergs.jabberbot;
 import java.net.MalformedURLException;
 import org.jivesoftware.smack.*;
 import org.jivesoftware.smack.packet.*;
-import org.jivesoftware.smackx.*;
 import org.apache.log4j.*;
-import org.apache.commons.cli.*;
 import java.io.*;
 import java.util.*;
-import java.lang.*;
 import org.apache.xmlrpc.*;
 import java.text.*;
-import org.jivesoftware.smackx.muc.DiscussionHistory;
 import org.jivesoftware.smackx.muc.MultiUserChat;
 
 /**
