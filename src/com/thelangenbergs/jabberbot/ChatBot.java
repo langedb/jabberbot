@@ -143,6 +143,7 @@ class CommandHandler implements Runnable {
 		conn = c;
 		mesg = m;
 		cmd = command;
+		t.setName(cmd+" handler");
 		t.start();
 	}
 	

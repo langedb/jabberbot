@@ -51,7 +51,7 @@ public class PageScanner implements Runnable {
 		catch(IOException ioe){
 			logger.error(ioe.getMessage(), ioe);
 			try{
-				conn.sendMessage("I encountered an error -- shutting down paging scanner for this room");
+				conn.sendMessage("I've encountered an error -- shutting down paging scanner for this room");
 			}
 			catch(XMPPException e){
 				logger.error(e.getMessage(),e);
@@ -117,6 +117,7 @@ public class PageScanner implements Runnable {
 		this.sleeptime = sleeptime;
 		
 		t = new Thread(this);
+		t.setName(watchDir.getName()+" pagescanner");
 		//let's get the ball rolling on directory monitoring
 		t.start();
 	}

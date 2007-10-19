@@ -142,6 +142,8 @@ public class JabberBot {
 				//start a page-scanner for this room
 				new PageScanner(muc,new File(_watchDir+System.getProperty("file.separator")+room),_scanDelay);
 
+				//store this room in a hashtable.  We may want in the future
+				//to do something with these rooms.
 				roomObjs.put((String)rooms.get(i),muc);
 			}
 			
