@@ -34,10 +34,10 @@ public class ChatBot implements PacketListener {
 	private XMPPConnection conn;
 	private MultiUserChat muc;
 	
-	private static String keywords[] = {"getinfo", "time", "sleep", "fortune"};
+	private static String keywords[] = {"getinfo", "time", "sleep", "fortune", "mail"};
 	
 	/**
-	 *
+	 * Creates a new chatbot listener.
 	 * @param c - connection back to server for sending messages
 	 * @param m - connection to Chatroom for doing various things
 	 */
@@ -47,6 +47,11 @@ public class ChatBot implements PacketListener {
 		muc = m;
 	}
 
+	/**
+	 * Processes an incoming packet from the chatroom. Determines if it's a message 
+	 * for us or not.
+	 * @param packet The incoming message from the chatroom.
+	 */
 	public void processPacket(Packet packet) {
 		//cast the packet as a Message
 		Message msg = (Message) packet;
@@ -69,6 +74,14 @@ public class ChatBot implements PacketListener {
 		}
 	}
 	
+	/**
+	 * Checks to see if the keyword in the message is recnogized or not.  If the command
+	 * is not recnogized we will return an error message to the chatroom.
+	 * @param msg The incoming message that we are processing
+	 * @param command The command we're evaluating to see if it is something we can handle
+	 * @return True if we can deal with this command
+	 * @throws org.jivesoftware.smack.XMPPException if we have problems reporting an unrecnogized command back to the user
+	 */
 	protected boolean validateCommand(Message msg,String command) throws XMPPException {
 		boolean found = false;
 		for(int i=0; i<keywords.length; i++){
@@ -83,12 +96,19 @@ public class ChatBot implements PacketListener {
 		return found;
 	}
 	
+	/**
+	 * Return the nickname of the individual who sent the message.
+	 * @param msg The message who we're trying to identify the sender on.
+	 * @return the nickname of the person who sent the message.
+	 */
 	public static String getFrom(Message msg){
 		return msg.getFrom().substring(msg.getFrom().indexOf('/')+1);
 	}
 	
 	/**
 	 * gets the command out of the message.  Commands of the form nickname: <command>
+	 * @param m The Message which we are trying to extract the command from
+	 * @return The command from the message
 	 */
 	protected String getCommand(Message m){
 		StringTokenizer st = new StringTokenizer(m.getBody());
@@ -96,10 +116,19 @@ public class ChatBot implements PacketListener {
 		return st.nextToken(); //the command
 	}
 	
+	/**
+	 * Sets the nickname for us in the chatroom we are listening to.
+	 * @param nick The new nickname
+	 * @throws org.jivesoftware.smack.XMPPException if there was a problem setting the new nickname
+	 */
 	public void setMyNick(String nick) throws XMPPException{
 		muc.changeNickname(nick);
 	}
 	
+	/**
+	 * Return the nickname that we are connected to the room with
+	 * @return Our nickname for the room we are listening in
+	 */
 	public String getMyNick(){
 		return muc.getNickname();
 	}
@@ -189,7 +218,7 @@ class CommandHandler implements Runnable {
 		}
 		catch(IOException e){
 			logger.warn(e.getMessage(),e);
-			conn.sendMessage(mesg.getFrom()+": I'm sorry, but it looks like fortune is not installed on this machine");
+			conn.sendMessage(mesg.getFrom()+": I'm sorry, but it looks like fortune is not installed on my machine");
 		}
 		
 	}

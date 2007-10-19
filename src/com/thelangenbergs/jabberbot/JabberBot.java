@@ -45,6 +45,9 @@ public class JabberBot {
 	private XMPPConnection conn;
 	private Roster ross;
 	
+	/**
+	 * Read the configuration file
+	 */
 	protected void readConfigFile() throws FileNotFoundException, IOException {
 		File confFile = new File(_config);
 		
@@ -58,6 +61,10 @@ public class JabberBot {
 		}
 	}
 	
+	/**
+	 * Run through the configuration file and pull the configuration into the 
+	 * program
+	 */
 	protected void processConfiguration() throws NumberFormatException {
 		_server = configuration.getProperty("jabber.server");
 		_port = Integer.parseInt(configuration.getProperty("jabber.port"));
