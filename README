@@ -1,0 +1,15 @@
+JabberBot
+
+A robot for jabber servers.  Current incarnation scans a directory looking
+and joins chatrooms (one per subdirectory).  To enter a password protected
+room you should create a file in the main directory called $ROOMNAME.passwd
+in that file you should place the room password.
+
+/tmp/rooms
+/tmp/rooms/servicechat -- join the servicechat room
+
+/tmp/rooms/webadmin.passwd -- password for the webadmin room
+/tmp/rooms/webadmin
+
+Jabberbot will then scan the subdirectories for files.  When a new file appears
+it will write the contents to the room and delete the file.
