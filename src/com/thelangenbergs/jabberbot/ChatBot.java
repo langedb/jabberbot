@@ -15,7 +15,6 @@ import org.jivesoftware.smack.packet.*;
 import org.apache.log4j.*;
 import java.io.*;
 import java.util.*;
-import org.apache.xmlrpc.*;
 import java.text.*;
 import org.jivesoftware.smackx.muc.MultiUserChat;
 
@@ -166,9 +165,7 @@ class CommandHandler implements Runnable {
 				SimpleDateFormat sdf = new SimpleDateFormat("EE MMM d yyyy HH:mm:ss z");
 				sdf.setTimeZone(tz);
 				conn.sendMessage("The current time is: "+sdf.format(new Date()));
-			} else if (cmd.equals("getinfo")){
-				getInformation();
-			}
+			} 
 			else if(cmd.equals("fortune")){
 				getFortune();
 			}
@@ -184,12 +181,6 @@ class CommandHandler implements Runnable {
 		}
 	}
 	
-	protected void getInformation() throws MalformedURLException {
-		XmlRpcClient xml = new XmlRpcClient("https://cnet.uchicago.edu/ams/servlet/AMSXMXLSERV");
-		
-		
-	}
-
 	private void getFortune() throws XMPPException {
 		Runtime r = Runtime.getRuntime();
 		
