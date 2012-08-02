@@ -1,0 +1,26 @@
+#first we have server configuration parameters
+jabber.server=im.example.org
+jabber.port=5222
+jabber.user=aUserName
+jabber.password=aPassword
+
+#what nickname should we use when we log into a room
+jabber.muc.nickname=HELPeR
+
+#what is the service name for the chatrooms
+jabber.muc.servicename=muc.server.name
+
+#how much history should we keep in our memory cache so we can email
+#an individual the history
+jabber.muc.saveHistory=100
+
+#what directory should we watch for pages
+#jabberbot will scan this directory and for each 
+#subdirectory it will join a chatroom of that name
+#it will then watch the subdirectories and when a new 
+#file is placed in the directory it will cat the file 
+#and announce the message in the correct chatroom
+watchdir=/path/to/directory
+
+#how long we should sleep between directory scans (in seconds)
+scandelay=10
