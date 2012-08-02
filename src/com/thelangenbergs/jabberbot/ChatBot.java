@@ -24,7 +24,7 @@ import org.jivesoftware.smackx.muc.MultiUserChat;
  * @author davel
  */
 public class ChatBot implements PacketListener {
-	private static Category logger = Category.getInstance(ChatBot.class.getName());
+	private static Logger logger = Logger.getLogger(ChatBot.class);
 	
 	private XMPPConnection conn;
 	private MultiUserChat muc;
@@ -52,7 +52,9 @@ public class ChatBot implements PacketListener {
 		Message msg = (Message) packet;
 		logger.debug("received message "+msg.getBody());
 
-		if(msg.getBody().startsWith(getMyNick()) && !(msg.getFrom().equals(muc.getNickname()))){
+		String body = msg.getBody();
+				
+		if(isMessageForMe(body)  && !(msg.getFrom().equals(muc.getNickname()))){
 			//we have something to deal with
 			String command = getCommand(msg);
 			try{
@@ -70,12 +72,12 @@ public class ChatBot implements PacketListener {
 	}
 	
 	/**
-	 * Checks to see if the keyword in the message is recnogized or not.  If the command
-	 * is not recnogized we will return an error message to the chatroom.
+	 * Checks to see if the keyword in the message is recognized or not.  If the command
+	 * is not recognized we will return an error message to the chatroom.
 	 * @param msg The incoming message that we are processing
 	 * @param command The command we're evaluating to see if it is something we can handle
 	 * @return True if we can deal with this command
-	 * @throws org.jivesoftware.smack.XMPPException if we have problems reporting an unrecnogized command back to the user
+	 * @throws org.jivesoftware.smack.XMPPException if we have problems reporting an unrecognized command back to the user
 	 */
 	protected boolean validateCommand(Message msg,String command) throws XMPPException {
 		boolean found = false;
@@ -83,6 +85,14 @@ public class ChatBot implements PacketListener {
 			if(command.equalsIgnoreCase(keywords[i])){
 				found = true;
 			}
+		}
+		
+		//validate for the in-line watches
+		String body = msg.getBody();
+		if(body.contains("CHG") ||
+				body.contains("PRB") ||
+				body.contains("INC")){
+			found = true;
 		}
 		
 		if(!found){
@@ -127,6 +137,31 @@ public class ChatBot implements PacketListener {
 	public String getMyNick(){
 		return muc.getNickname();
 	}
+
+	/**
+	 * Determine if this message is for us
+	 * @param body
+	 * @return true if it is
+	 */
+	private boolean isMessageForMe(String body) {
+		if(body.startsWith(getMyNick())){
+			return true;
+		}
+		else if(body.startsWith("!.")){
+			return true;
+		}
+		else if(body.contains("INC")){
+			return true;
+		}
+		else if(body.contains("PRB")){
+			return true;
+		}
+		else if(body.contains("CHG")){
+			return true;
+		}
+		
+		return false;
+	}
 }
 
 class CommandHandler implements Runnable {
@@ -135,7 +170,7 @@ class CommandHandler implements Runnable {
 	private MultiUserChat conn;
 	private Message mesg;
 	private String cmd;
-	private static Category logger = Category.getInstance(CommandHandler.class.getName());
+	private static Logger logger = Logger.getLogger(CommandHandler.class);
 	
 	public CommandHandler(MultiUserChat c, Message m, String command){
 		t = new Thread(this);
@@ -152,6 +187,23 @@ class CommandHandler implements Runnable {
 	public void run(){
 		//ok so if we are in here we have a valid command as defined in ChatBot.keywords
 		try{
+			
+			String body = mesg.getBody();
+			if(body.contains("INC")){
+				//grab the INC word
+				StringTokenizer st = new StringTokenizer(body);
+				String incident = null;
+				
+				while(st.hasMoreTokens()){
+					String word = st.nextToken();
+					if(word.contains("INC")){
+						incident = word;
+					}
+				}
+			
+				conn.sendMessage("https://uchicago.service-now.com/incident.do?sysparm_query=number="+incident);
+			}
+			
 			if(cmd.equals("sleep")){
 				
 				try{
@@ -206,7 +258,7 @@ class CommandHandler implements Runnable {
 		}
 		catch(IOException e){
 			logger.warn(e.getMessage(),e);
-			conn.sendMessage(mesg.getFrom()+": I'm sorry, but it looks like fortune is not installed on my machine");
+			conn.sendMessage(mesg.getFrom()+": for*tune /'forCHan/ n. 1. What you'll have to pay davel to implement that feature.");
 		}
 		
 	}
