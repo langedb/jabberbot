@@ -86,7 +86,7 @@ public class ChatBot implements PacketListener {
 		}
 		
 		if(!found){
-			muc.sendMessage(getFrom(msg)+": unrecnogized command");
+			muc.sendMessage(getFrom(msg)+": I do not understand what you mean by that");
 		}
 		return found;
 	}
