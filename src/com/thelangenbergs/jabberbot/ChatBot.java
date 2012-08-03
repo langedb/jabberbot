@@ -16,6 +16,8 @@ import org.apache.log4j.*;
 import java.io.*;
 import java.util.*;
 import java.text.*;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import org.jivesoftware.smackx.muc.MultiUserChat;
 
 /**
@@ -172,11 +174,17 @@ class CommandHandler implements Runnable {
 	private String cmd;
 	private static Logger logger = Logger.getLogger(CommandHandler.class);
 	
+	private Pattern serviceNowPattern;
+	
 	public CommandHandler(MultiUserChat c, Message m, String command){
 		t = new Thread(this);
 		conn = c;
 		mesg = m;
 		cmd = command;
+		
+		serviceNowPattern = Pattern.compile("INC\\p{Digit}{7}");
+		
+		
 		t.setName(cmd+" handler");
 		t.start();
 	}
@@ -189,19 +197,16 @@ class CommandHandler implements Runnable {
 		try{
 			
 			String body = mesg.getBody();
+			Matcher m = serviceNowPattern.matcher(body);
+			
+			
 			if(body.contains("INC")){
 				//grab the INC word
-				StringTokenizer st = new StringTokenizer(body);
 				String incident = null;
-				
-				while(st.hasMoreTokens()){
-					String word = st.nextToken();
-					if(word.contains("INC")){
-						incident = word;
-					}
+				while(m.find()){
+					incident = body.substring(m.start(), m.end());
+					conn.sendMessage("https://uchicago.service-now.com/incident.do?sysparm_query=number="+incident);
 				}
-			
-				conn.sendMessage("https://uchicago.service-now.com/incident.do?sysparm_query=number="+incident);
 			}
 			
 			if(cmd.equals("sleep")){
