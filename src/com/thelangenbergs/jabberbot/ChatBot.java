@@ -263,7 +263,7 @@ class CommandHandler implements Runnable {
 		}
 		catch(IOException e){
 			logger.warn(e.getMessage(),e);
-			conn.sendMessage(mesg.getFrom()+": for*tune /'forCHan/ n. 1. What you'll have to pay davel to implement that feature.");
+			conn.sendMessage(mesg.getFrom()+": fortune is not installed on this machine.");
 		}
 		
 	}
