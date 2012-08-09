@@ -176,6 +176,7 @@ class CommandHandler implements Runnable {
 					incident = body.substring(m.start(), m.end());
 					conn.sendMessage("https://uchicago.service-now.com/incident.do?sysparm_query=number="+incident);
 				}
+				return;
 			}
 			
 			if(cmd.equals("sleep")){
