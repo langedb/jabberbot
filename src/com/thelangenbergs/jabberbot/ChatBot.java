@@ -31,17 +31,20 @@ public class ChatBot implements PacketListener {
 	private XMPPConnection conn;
 	private MultiUserChat muc;
 	
+	private Properties configuration;
 	private static String keywords[] = {"getinfo", "time", "sleep", "fortune", "mail"};
 	
 	/**
 	 * Creates a new chatbot listener.
 	 * @param c - connection back to server for sending messages
 	 * @param m - connection to Chatroom for doing various things
+	 * @param config - application configuration object
 	 */
-	public ChatBot(XMPPConnection c,MultiUserChat m) {
+	public ChatBot(XMPPConnection c,MultiUserChat m,Properties config) {
 		logger.debug("listener registered:");
 		conn = c; //for sending back messages
 		muc = m;
+		configuration = config;
 	}
 
 	/**
@@ -64,7 +67,7 @@ public class ChatBot implements PacketListener {
 					//we have a valid command -- do something with it
 					//the reason we spawn off a thread to do the dirty work is because some of our commands will
 					//take quite a bit of time to complete and we don't want to block
-					new CommandHandler(muc,msg,command);
+					new CommandHandler(muc,msg,command,configuration);
 				}
 			}
 			catch(XMPPException e){
@@ -100,7 +103,8 @@ public class ChatBot implements PacketListener {
 		if(!found){
 			muc.sendMessage(getFrom(msg)+": I do not understand what you mean by that");
 		}
-		return found;
+		//return found;
+		return true;
 	}
 	
 	/**
@@ -174,13 +178,15 @@ class CommandHandler implements Runnable {
 	private String cmd;
 	private static Logger logger = Logger.getLogger(CommandHandler.class);
 	
+	private Properties configuration;
 	private Pattern serviceNowPattern;
 	
-	public CommandHandler(MultiUserChat c, Message m, String command){
+	public CommandHandler(MultiUserChat c, Message m, String command, Properties config){
 		t = new Thread(this);
 		conn = c;
 		mesg = m;
 		cmd = command;
+		configuration = config;
 		
 		serviceNowPattern = Pattern.compile("INC\\p{Digit}{7}");
 		
@@ -225,6 +231,11 @@ class CommandHandler implements Runnable {
 			} 
 			else if(cmd.equals("fortune")){
 				getFortune();
+			}
+			else {
+				//try alpha
+				AlphaHandler handler = new AlphaHandler(configuration);
+				conn.sendMessage(handler.queryAlpha(body));
 			}
 		}
 		catch(Exception e){

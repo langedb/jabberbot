@@ -138,7 +138,7 @@ public class JabberBot {
 				hist.setMaxStanzas(0);
 				MultiUserChat muc = new MultiUserChat(conn,room+"@"+_chatServer);
 				muc.join(_nickname,getRoomPassword(room),hist,SmackConfiguration.getPacketReplyTimeout());
-				muc.addMessageListener(new ChatBot(conn,muc));
+				muc.addMessageListener(new ChatBot(conn,muc,configuration));
 				//start a page-scanner for this room
 				new PageScanner(muc,new File(_watchDir+System.getProperty("file.separator")+room),_scanDelay);
 
