@@ -45,6 +45,8 @@ public class AlphaHandler {
 	}
 	
 	public String queryAlpha(String query) throws WAException{
+		log.debug("query is: '"+query+"'");
+		
 		StringBuilder response = new StringBuilder();
 		WAQuery q = engine.createQuery(query);
 		

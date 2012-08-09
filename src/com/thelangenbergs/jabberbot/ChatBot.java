@@ -199,7 +199,15 @@ class CommandHandler implements Runnable {
 				//try alpha
 				conn.sendMessage(mesg.getFrom().substring(mesg.getFrom().indexOf("/")+1) +": researching your query...");
 				AlphaHandler handler = new AlphaHandler(configuration);
-				conn.sendMessage(handler.queryAlpha(body));
+				//strip off our nick from the body
+				String query = new String(body);
+				String nick  = configuration.getProperty("jabber.muc.nickname");
+				if(query.contains(nick)){
+					conn.sendMessage(handler.queryAlpha(query.substring(query.indexOf(nick)+nick.length()+1).trim()));
+				}
+				else {
+					conn.sendMessage(handler.queryAlpha(body));
+				}
 			}
 		}
 		catch(Exception e){
