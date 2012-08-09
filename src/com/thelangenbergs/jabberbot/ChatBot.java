@@ -20,6 +20,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import org.jivesoftware.smackx.muc.MultiUserChat;
 
+
 /**
  * connect up to a MUC room and handle requests
  *
@@ -62,49 +63,11 @@ public class ChatBot implements PacketListener {
 		if(isMessageForMe(body)  && !(msg.getFrom().equals(muc.getNickname()))){
 			//we have something to deal with
 			String command = getCommand(msg);
-			try{
-				if(validateCommand(msg,command)){
-					//we have a valid command -- do something with it
-					//the reason we spawn off a thread to do the dirty work is because some of our commands will
-					//take quite a bit of time to complete and we don't want to block
-					new CommandHandler(muc,msg,command,configuration);
-				}
-			}
-			catch(XMPPException e){
-				logger.error(e.getMessage(),e);
-			}
+			//we have a valid command -- do something with it
+			//the reason we spawn off a thread to do the dirty work is because some of our commands will
+			//take quite a bit of time to complete and we don't want to block
+			new CommandHandler(muc,msg,command,configuration);
 		}
-	}
-	
-	/**
-	 * Checks to see if the keyword in the message is recognized or not.  If the command
-	 * is not recognized we will return an error message to the chatroom.
-	 * @param msg The incoming message that we are processing
-	 * @param command The command we're evaluating to see if it is something we can handle
-	 * @return True if we can deal with this command
-	 * @throws org.jivesoftware.smack.XMPPException if we have problems reporting an unrecognized command back to the user
-	 */
-	protected boolean validateCommand(Message msg,String command) throws XMPPException {
-		boolean found = false;
-		for(int i=0; i<keywords.length; i++){
-			if(command.equalsIgnoreCase(keywords[i])){
-				found = true;
-			}
-		}
-		
-		//validate for the in-line watches
-		String body = msg.getBody();
-		if(body.contains("CHG") ||
-				body.contains("PRB") ||
-				body.contains("INC")){
-			found = true;
-		}
-		
-		if(!found){
-			muc.sendMessage(getFrom(msg)+": I do not understand what you mean by that");
-		}
-		//return found;
-		return true;
 	}
 	
 	/**
@@ -234,6 +197,7 @@ class CommandHandler implements Runnable {
 			}
 			else {
 				//try alpha
+				conn.sendMessage(mesg.getFrom().substring(mesg.getFrom().indexOf("/")+1) +": researching your query...");
 				AlphaHandler handler = new AlphaHandler(configuration);
 				conn.sendMessage(handler.queryAlpha(body));
 			}
