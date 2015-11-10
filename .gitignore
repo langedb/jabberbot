@@ -2,3 +2,5 @@
 /build/
 /dist/
 jabberbot.conf
+.idea/
+*.iml
