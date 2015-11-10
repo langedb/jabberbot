@@ -9,16 +9,24 @@
 
 package com.thelangenbergs.jabberbot;
 
-import java.net.MalformedURLException;
-import org.jivesoftware.smack.*;
-import org.jivesoftware.smack.packet.*;
-import org.apache.log4j.*;
-import java.io.*;
-import java.util.*;
-import java.text.*;
+import org.apache.log4j.Logger;
+import org.jivesoftware.smack.PacketListener;
+import org.jivesoftware.smack.XMPPConnection;
+import org.jivesoftware.smack.XMPPException;
+import org.jivesoftware.smack.packet.Message;
+import org.jivesoftware.smack.packet.Packet;
+import org.jivesoftware.smackx.muc.MultiUserChat;
+
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.Properties;
+import java.util.StringTokenizer;
+import java.util.TimeZone;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import org.jivesoftware.smackx.muc.MultiUserChat;
 
 
 /**
@@ -195,20 +203,6 @@ class CommandHandler implements Runnable {
 			} 
 			else if(cmd.equals("fortune")){
 				getFortune();
-			}
-			else {
-				//try alpha
-				conn.sendMessage(mesg.getFrom().substring(mesg.getFrom().indexOf("/")+1) +": researching your query...");
-				AlphaHandler handler = new AlphaHandler(configuration);
-				//strip off our nick from the body
-				String query = new String(body);
-				String nick  = configuration.getProperty("jabber.muc.nickname");
-				if(query.contains(nick)){
-					conn.sendMessage(handler.queryAlpha(query.substring(query.indexOf(nick)+nick.length()+1).trim()));
-				}
-				else {
-					conn.sendMessage(handler.queryAlpha(body));
-				}
 			}
 		}
 		catch(Exception e){
