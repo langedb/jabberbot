@@ -123,10 +123,10 @@ public class ChatBot implements PacketListener {
 			return true;
 		}
 		else if(body.contains("PRB")){
-			return true;
+			return false;
 		}
 		else if(body.contains("CHG")){
-			return true;
+			return false;
 		}
 		
 		return false;
