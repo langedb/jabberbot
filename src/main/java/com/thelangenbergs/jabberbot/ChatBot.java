@@ -21,10 +21,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.Properties;
-import java.util.StringTokenizer;
-import java.util.TimeZone;
+import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -41,7 +38,7 @@ public class ChatBot implements PacketListener {
 	private MultiUserChat muc;
 	
 	private Properties configuration;
-	private static String keywords[] = {"getinfo", "time", "sleep", "fortune", "mail"};
+	private static String keywords[] = {"getinfo", "time", "sleep", "fortune", "mail", "slack"};
 	
 	/**
 	 * Creates a new chatbot listener.
@@ -136,6 +133,9 @@ public class ChatBot implements PacketListener {
 		else if(body.contains("CHG")){
 			return false;
 		}
+		else if(body.contains("SEV1") || body.contains("Sev1") || body.contains("sev1") || body.contains("bridge")){
+			return true;
+		}
 		
 		return false;
 	}
@@ -143,7 +143,9 @@ public class ChatBot implements PacketListener {
 
 class CommandHandler implements Runnable {
 	Thread t;
-	
+
+	private static Date sev1 = null;
+
 	private MultiUserChat conn;
 	private Message mesg;
 	private String cmd;
@@ -203,6 +205,11 @@ class CommandHandler implements Runnable {
 			} 
 			else if(cmd.equals("fortune")){
 				getFortune();
+			}else if(cmd.equals("slack")){
+				SlackBot slack = new SlackBot(configuration.getProperty("slack.url"), configuration.getProperty("slack.icon"), configuration.getProperty("slack.channel"), configuration.getProperty("slack.username"));
+				slack.sendMessage(mesg.getFrom()+" pinged");
+			}else {
+				handleSev1();
 			}
 		}
 		catch(Exception e){
@@ -214,6 +221,31 @@ class CommandHandler implements Runnable {
 				logger.error(ex.getMessage(),ex);
 			}
 		}
+	}
+
+	private void handleSev1() throws IOException{
+		logger.debug("handling SEV1");
+		if(sev1 == null){
+			sev1 = new Date();
+			SlackBot slack = new SlackBot(configuration.getProperty("slack.url"), ":warning:", configuration.getProperty("slack.channel"), configuration.getProperty("slack.username"));
+			slack.sendMessage("<!here> Possible SEV1 called by "+mesg.getFrom()+" \n\n Dial +1 866 224 5643; 7738347381# to join bridge\n\n *Original:* ```"+mesg.getBody()+"```");
+		}else{
+			//see if we've had a sev one recently
+			GregorianCalendar gc = new GregorianCalendar();
+			gc.setTime(sev1);
+			gc.set(Calendar.HOUR_OF_DAY, gc.get(Calendar.HOUR_OF_DAY) + 6);
+			if (gc.getTime().before(new Date())) {
+				//gc at this point contains a time that is 6 hours after the time
+				//that the sev1 date was set.  If it is now later than that time,
+				//then send the message
+				SlackBot slack = new SlackBot(configuration.getProperty("slack.url"), ":warning:", configuration.getProperty("slack.channel"), configuration.getProperty("slack.username"));
+				slack.sendMessage("<!here> Possible SEV1 called by "+mesg.getFrom()+" \n\n Dial +1 866 224 5643; 7738347381# to join bridge\n\n *Original:* ```"+mesg.getBody()+"```");
+			}
+			else{
+				logger.info("Not sending sev1 notice because one has been sent in the last 6 hours: "+sev1.toString());
+			}
+		}
+
 	}
 	
 	private void getFortune() throws XMPPException {

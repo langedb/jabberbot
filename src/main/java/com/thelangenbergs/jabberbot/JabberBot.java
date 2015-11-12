@@ -6,14 +6,21 @@
 
 package com.thelangenbergs.jabberbot;
 
-import org.jivesoftware.smack.*;
-import org.jivesoftware.smack.packet.*;
-import org.apache.log4j.*;
 import org.apache.commons.cli.*;
-import java.io.*;
-import java.util.*;
+import org.apache.log4j.Level;
+import org.apache.log4j.Logger;
+import org.apache.log4j.PropertyConfigurator;
+import org.jivesoftware.smack.ConnectionConfiguration;
+import org.jivesoftware.smack.Roster;
+import org.jivesoftware.smack.SmackConfiguration;
+import org.jivesoftware.smack.XMPPConnection;
 import org.jivesoftware.smackx.muc.DiscussionHistory;
 import org.jivesoftware.smackx.muc.MultiUserChat;
+
+import java.io.*;
+import java.util.ArrayList;
+import java.util.Hashtable;
+import java.util.Properties;
 
 /**
  *
@@ -44,6 +51,8 @@ public class JabberBot {
 	
 	private XMPPConnection conn;
 	private Roster ross;
+
+	private SlackBot slack;
 	
 	/**
 	 * Read the configuration file
@@ -77,6 +86,8 @@ public class JabberBot {
 		
 		_scanDelay = Integer.parseInt(configuration.getProperty("scandelay"));
 		_chatSaveHistory = Integer.parseInt(configuration.getProperty("jabber.muc.saveHistory"));
+
+		slack = new SlackBot(configuration.getProperty("slack.url"), configuration.getProperty("slack.icon"), configuration.getProperty("slack.channel"), configuration.getProperty("slack.username"));
 	}
 	
 	/** Creates a new instance of jabberBot */
